@@ -94,7 +94,18 @@ class WaterCreature(Creature):
   def GetWeakAgainst(self):
     return "Electric"
 
+class Bag():
+    def __init__(self):
+        self.__Items = {}
 
+    def AddItem(self, Item, Quantity=1):
+        self.__Items[Item] = self.__Items.get(Item, 0) + Quantity
+
+    def GetContents(self):
+        if len(self.__Items) == 0:
+            return "empty"
+        return ", ".join(f"{Item} x {Quantity}" for Item, Quantity in self.__Items.items())
+    
 Anchoir = WaterCreature("Anchoir", 13, 42, 50, 40, 67)
 Anchoir.LearnMove("Anchor Smash", 50)
 Anchoir.LearnMove("Tsunami", 70)
@@ -115,8 +126,71 @@ Sproutlet = GrassCreature("Sproutlet", 14, 50, 51, 42, 60)
 Sproutlet.LearnMove("Bramble Bash", 30)
 Sproutlet.LearnMove("Splinter Jab", 20)
 Sproutlet.SetLevel(30)
-Anchoir.LevelUp()
-    
+Sproutlet.LevelUp()
+
+##Superclass 2
+class Character():
+    def __init__(self, Name, Age, HomeTown):
+        self.__Name = Name
+        self.__Age = Age
+        self.__HomeTown = HomeTown
+        self._Bag = Bag()
+
+   def GetName(self):
+       return self.__Name
+   def GetRole(self):
+       return "Character"
+   def Display(self):
+       print(f"{self.GetRole()}: {self.GetName()}, age {self.__Age}, from {self.__HomeTown}")
+       print(f" Bag: {self._Bag.GetContents()}")
+
+class Trainer(Character):
+    def __init__(self, Name, Age, HomeTown, Badges = 0):
+        super().__init__(Name, Age, HomeTown)
+        self._Badges = Badges
+        self._Team = []
+    def AddToTeam(self, NewCreature):
+        if len(self._Team)<6:
+            self._Team.append(NewCreature) #Aggregation, the creeature is referenced not owned
+        else:
+            print(f" {self.GetName()}'s team is full")
+    def ReleaseFromTeam(self, CreatureName):
+        for C in self._Team:
+            if C.GetName() == CreatureName:
+                self._Team.remove(C)
+                print(f" {CreatureName} was released by {self.GetName()}")
+                return C
+       return None
+   def Display(self):
+       super().Display()
+       print(f" Badges: {self._Badges}")
+       print(f" Team ({len(self._Team_}):")
+       for C in self._Team:
+           C.Display()
+  def GetRole(self):
+      return "Trainer"
+
+class GymLeader(Trainer):
+    def __init__(self, Name, Age, HomeTown, Badges = 0, speciality, GymName):
+        super().__init__(Name, Age, HomeTown, Badges = 0)
+        self._speciality = speciality
+        self._GymName = GymName
+
+class Professor(Character):
+    def __init__(self, Name, Age, HomeTown, ResearchArea):
+        super().__init__(Name, Age, HomeTown)
+        self._FieldGuide = []
+        self._ResearchArea = ResearchArea
+    def AddCreature(self, NewCreature):
+        if NewCreature in self._FieldGuide:
+            return -1
+        else:
+            self._FieldGuide.append(NewCreature)
+    def GetRole(self):
+        return ResearchArea
+        
+
+  
   
 
   
